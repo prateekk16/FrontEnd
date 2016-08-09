@@ -1,0 +1,72 @@
+$settings: (
+    maxWidth: 1280px,
+    cols: 12,
+    margin: 15px,
+    breakpoints: (
+        min: "(max-width: 480px)",
+        small: "(max-width: 768px) and (min-width: 481px)",
+        med: "(max-width: 1024px) and (min-width: 769px)",
+        large: "(min-width: 1025px)"
+    )
+);
+
+*{
+    box-sizing: border-box;
+}
+
+.text-center{
+    text-align: center;
+}
+
+@mixin renderStyles($setting){
+    .new-container{
+        padding-left: 0 map-get($settings, "margin");
+        margin: 0 auto;
+        max-width: map-get($settings, "maxWidth");
+    }
+    .new-container-fluid{
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    .new-section{
+        &:after{
+            content: "";
+            clear: both;
+            padding: 0 map-get($settings, "margin");
+            display: block;
+        }
+    }
+
+    $breakpoints: map-get($settings, "breakpoints");
+
+    @each $key, $breakpoint in $breakpoints{
+        @include media($breakpoint)
+        @include renderGrid($key, $setting)
+        
+    }
+}
+
+@mixin renderGrid($key, $setting){
+    $i: 1;
+    @while $i <= map-get($settings, "cols"){
+        .#{$key}-#{$i}{
+            float: left;
+            padding: 0 map-get($settings, "margin");
+            width: 100% * $i/map-get($settings, "cols");
+        }
+        .#{$key}-offset-#{$i}{
+            margin-left: 100% * $i/map-get($settings, "cols");
+        }
+        $i: $i+1;
+    }
+}
+
+@mixin media($query){
+    @media only screen and #{$query}{
+        @content;
+    }
+}
+
+@include renderStyles($settings);
